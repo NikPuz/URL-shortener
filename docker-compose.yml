@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  database:
+    container_name: "shortener_ssdb"
+    image: expert/ssdb:latest
+    restart: always
+    ports:
+      - "8888:8888"
+
+  server:
+    container_name: "shortener_server"
+    build:
+      context: .
+      dockerfile: "Dockerfile"
+    restart: always
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database

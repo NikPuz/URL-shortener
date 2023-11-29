@@ -1,0 +1,14 @@
+shutdownTimeout: 5s
+
+server:
+  port: 8080
+  writeTimeout: 10s
+  readTimeout: 10s
+  idleTimeout: 10s
+
+dataBase:
+  address: 'shortener_ssdb'
+  port: 8888
+  poolSize: 20
+  connectTimeout: 10
+  readWriteTimeout: 10
