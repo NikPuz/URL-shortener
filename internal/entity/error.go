@@ -10,8 +10,9 @@ import (
 
 var InternalServerErrorResponse, _ = json.Marshal(LogicError{ResponseMessage: "internal server error"})
 var NotFoundError = &LogicError{ResponseMessage: "not found", Code: 404}
-var URLNotEnteredError = &LogicError{ResponseMessage: "url not entered", Code: 404}
-var ShortURLNotEnteredError = &LogicError{ResponseMessage: "shortURL not entered", Code: 404}
+var URLNotEnteredError = &LogicError{ResponseMessage: "url not entered", Code: 400}
+var ShortURLNotEnteredError = &LogicError{ResponseMessage: "shortURL not entered", Code: 400}
+var NotURLError = &LogicError{ResponseMessage: "url parameter is not url", Code: 400}
 
 type LogicError struct {
 	ResponseMessage string `json:"error"`

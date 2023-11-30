@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"go.uber.org/zap"
 	"net/http"
+	"net/url"
 	"time"
 	"url-shortner/internal/api/dto"
 	routerMiddleware "url-shortner/internal/api/middleware"
@@ -33,17 +34,23 @@ func RegisterURLHandlers(r *chi.Mux, service entity.IURLService, logger *zap.Log
 
 func (h urlHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) ([]byte, int) {
 
-	url := r.URL.Query().Get("url")
-
-	if len(url) == 0 {
+	longURL := r.URL.Query().Get("url")
+	if len(longURL) == 0 {
 		resp, code := entity.HandleError(r.Context(), h.Logger, entity.URLNotEnteredError)
 		w.WriteHeader(code)
 		w.Write(resp)
 		return resp, code
 	}
 
-	shortURL, err := h.URLService.CreateShortURL(r.Context(), url)
+	_, err := url.ParseRequestURI(longURL)
+	if err != nil {
+		resp, code := entity.HandleError(r.Context(), h.Logger, entity.NotURLError)
+		w.WriteHeader(code)
+		w.Write(resp)
+		return resp, code
+	}
 
+	shortURL, err := h.URLService.CreateShortURL(r.Context(), longURL)
 	if err != nil {
 		resp, code := entity.HandleError(r.Context(), h.Logger, err)
 		w.WriteHeader(code)
@@ -61,7 +68,6 @@ func (h urlHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) ([]by
 func (h urlHandler) RedirectByShortURL(w http.ResponseWriter, r *http.Request) ([]byte, int) {
 
 	shortURL := chi.URLParam(r, "shortURL")
-
 	if len(shortURL) == 0 {
 		resp, code := entity.HandleError(r.Context(), h.Logger, entity.ShortURLNotEnteredError)
 		w.WriteHeader(code)
@@ -69,8 +75,8 @@ func (h urlHandler) RedirectByShortURL(w http.ResponseWriter, r *http.Request) (
 		return resp, code
 	}
 
-	url, err := h.URLService.GetURL(r.Context(), shortURL)
-	if len(url) == 0 {
+	longURL, err := h.URLService.GetURL(r.Context(), shortURL)
+	if len(longURL) == 0 {
 		err = entity.NotFoundError
 	}
 
@@ -81,6 +87,6 @@ func (h urlHandler) RedirectByShortURL(w http.ResponseWriter, r *http.Request) (
 		return resp, code
 	}
 
-	http.Redirect(w, r, url, http.StatusFound)
+	http.Redirect(w, r, longURL, http.StatusFound)
 	return nil, http.StatusFound
 }
