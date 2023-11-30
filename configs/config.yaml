@@ -7,7 +7,7 @@ server:
   idleTimeout: 10s
 
 dataBase:
-  address: 'shortener_ssdb'
+  address: 'shortener_ssdb' #localhost
   port: 8888
   poolSize: 20
   connectTimeout: 10

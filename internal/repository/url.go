@@ -19,7 +19,7 @@ func (r URLRepository) SetKeyValue(ctx context.Context, key, value string) error
 	client := gossdb.Client()
 	defer client.Close()
 
-	err := client.Set(key, value)
+	err := client.HSet("Links", key, value)
 	if err != nil {
 		return err
 	}
@@ -32,7 +32,7 @@ func (r URLRepository) GetKeyValue(ctx context.Context, key string) (string, err
 	client := gossdb.Client()
 	defer client.Close()
 
-	value, err := client.Get(key)
+	value, err := client.HGet("Links", key)
 	if err != nil {
 		return "", err
 	}

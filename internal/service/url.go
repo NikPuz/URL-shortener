@@ -33,11 +33,5 @@ func (s URLService) CreateShortURL(ctx context.Context, url string) (string, err
 }
 
 func (s URLService) GetURL(ctx context.Context, shortURL string) (string, error) {
-
-	url, err := s.URLRepo.GetKeyValue(ctx, shortURL)
-	if err != nil {
-		return "", err
-	}
-
-	return url, nil
+	return s.URLRepo.GetKeyValue(ctx, shortURL)
 }
