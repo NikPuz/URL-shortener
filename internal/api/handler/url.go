@@ -28,7 +28,7 @@ func RegisterURLHandlers(r *chi.Mux, service entity.IURLService, logger *zap.Log
 	r.Use(routerMiddleware.ContentTypeJSON)
 
 	r.Get("/a/", routerMiddleware.DebugLogger(URLHandler.CreateShortURL))
-	r.Get("/s/{shortURL}", routerMiddleware.DebugLogger(URLHandler.RedirectByShortURL))
+	r.Get("/s/{shortURL:[A-z0-9]{8}}", routerMiddleware.DebugLogger(URLHandler.RedirectByShortURL))
 }
 
 func (h urlHandler) CreateShortURL(w http.ResponseWriter, r *http.Request) ([]byte, int) {
