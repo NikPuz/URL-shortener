@@ -14,12 +14,12 @@ func NewURLRepository() entity.IURLRepository {
 	return URLRepository
 }
 
-func (r URLRepository) SetKeyValue(ctx context.Context, key, value string) error {
+func (r URLRepository) AddULR(ctx context.Context, shortURL, LongURL string) error {
 
 	client := gossdb.Client()
 	defer client.Close()
 
-	err := client.HSet("Links", key, value)
+	err := client.HSet("Links", shortURL, LongURL)
 	if err != nil {
 		return err
 	}
@@ -27,12 +27,12 @@ func (r URLRepository) SetKeyValue(ctx context.Context, key, value string) error
 	return nil
 }
 
-func (r URLRepository) GetKeyValue(ctx context.Context, key string) (string, error) {
+func (r URLRepository) GetLongURL(ctx context.Context, shortURL string) (string, error) {
 
 	client := gossdb.Client()
 	defer client.Close()
 
-	value, err := client.HGet("Links", key)
+	value, err := client.HGet("Links", shortURL)
 	if err != nil {
 		return "", err
 	}

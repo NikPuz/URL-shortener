@@ -32,6 +32,6 @@ func (s URLService) CreateShortURL(ctx context.Context, url string) (string, err
 	return shortURL, nil
 }
 
-func (s URLService) GetURL(ctx context.Context, shortURL string) (string, error) {
-	return s.URLRepo.GetKeyValue(ctx, shortURL)
+func (s URLService) GetLongURL(ctx context.Context, shortURL string) (string, error) {
+	return s.URLRepo.GetLongURL(ctx, shortURL)
 }

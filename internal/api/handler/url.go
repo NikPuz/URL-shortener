@@ -75,7 +75,7 @@ func (h urlHandler) RedirectByShortURL(w http.ResponseWriter, r *http.Request) (
 		return resp, code
 	}
 
-	longURL, err := h.URLService.GetURL(r.Context(), shortURL)
+	longURL, err := h.URLService.GetLongURL(r.Context(), shortURL)
 	if len(longURL) == 0 {
 		err = entity.NotFoundError
 	}
