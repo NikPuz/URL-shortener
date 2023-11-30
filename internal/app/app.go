@@ -26,6 +26,7 @@ func Run(ctx context.Context, cfg *config.Config) {
 
 	server := newServer(cfg, router)
 	closer.Add(server.Shutdown)
+	defer gossdb.Shutdown()
 
 	// Repository
 	urlRepository := repository.NewURLRepository()
