@@ -18,13 +18,33 @@ func NewURLService(urlRepo entity.IURLRepository) entity.IURLService {
 }
 
 func (s URLService) CreateShortURL(ctx context.Context, url string) (string, error) {
-	sha := sha256.New()
-	sha.Write([]byte(url))
-	hash := sha.Sum(nil)
+	var shortURL string
+	hashObject := url
 
-	shortURL := string(base62.Encode(hash)[:8])
+loop:
+	for {
+		sha := sha256.New()
+		sha.Write([]byte(hashObject))
+		hash := sha.Sum(nil)
 
-	err := s.URLRepo.SetKeyValue(ctx, shortURL, url)
+		shortURL = string(base62.Encode(hash)[:8])
+
+		longURL, err := s.URLRepo.GetLongURL(ctx, shortURL)
+		if err != nil {
+			return "", err
+		}
+
+		switch longURL {
+		case url: // Нашли, возвращаем
+			return shortURL, nil
+		case "": // Не нашли, записываем
+			break loop
+		default: // Коллизия, перехэшиваем
+			hashObject = shortURL
+		}
+	}
+
+	err := s.URLRepo.AddULR(ctx, shortURL, url)
 	if err != nil {
 		return "", err
 	}
